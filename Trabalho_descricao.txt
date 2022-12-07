@@ -1,0 +1,43 @@
+Srs
+ 
+Vai aí a especificação dos trabalhos. Vou fornecer um conjunto de dados e cada um
+de vocês deverá resolver um dos problemas descritos nas seções 10.4 e 10.5 do livro, como
+listado abaixo.
+
+filtragem - Rodolfo
+
+predição - Bruno
+
+suavização - Guilherme
+ 
+regressão (=filtragem mas com dimensão reduzida do vetor beta) - Mateus
+ 
+Kalman - Cristyan
+ 
+A implementação deve ser em Python (preferencialmente) ou Matlab.
+Será entregue um relatório (em LaTeX) e feita uma apresentação em aula dia 07/Dezembro.
+ 
+Por ora, enquanto não lhe envio os dados, vão estudando as seções 10.4 e 10.5. Na próxima 
+segunda-feira teremos a última aula propriamente dita, depois as aulas serão dedicadas à
+elaboração do trabalho e dúvidas. 
+ 
+A propósito, segue anexo o famoso cronograma atualizado.
+
+---------------------------------------------------------------------------------------------------------
+
+Srs
+
+O sistema de email da UFRGS está fora do ar até quarta-feira, e tenho apenas os endereços de vcs, 
+por favor repassem aos outros alunos. 
+
+Segue um arquivo com os dados.
+
+Trata-se de um sinal senoidal (Z) com período de aproximadamente 100 amostras contaminado
+por muito ruído branco (N). Vcs devem criar um estimador para Z_t, cada um dentro da especificação
+individual dada anteriormente. Mateus, por enquanto tenta fazer um filtro da mesma forma que
+os outros, depois te explico a diferença do que tens que fazer. Cristyan, o teu vai ficar muito ruim,
+mas uma vez feito te mostro o que tem que mudar para funcionar. Todos: assumam que o período 
+é de exatamente 100 amostras, depois vemos como adaptar para o valor correto.
+
+Em tempo: como minha ignorância da programação em python é apenas um pouco menor do que a sua, 
+o arquivo saiu com 4 elementos em cada linha, quando deveria ser um apenas, lamento.
