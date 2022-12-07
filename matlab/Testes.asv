@@ -1,0 +1,166 @@
+% Testes adicionais
+clearvars erro
+close all
+L = n;
+Y = fft(vetor);
+P2 = abs(Y/L);
+P1 = P2(1:L/2+1);
+P1(2:end-1) = 2*P1(2:end-1);
+f = 1/1*(0:(L/2))/L;
+amp = 1*max(P1);                          % Estimativa da amplitude da senóide
+teste = [0.2 0.5 1 2 2.5 3 5 20 30 40 50 60 70 80 90];
+for jj = 1:length(teste)
+    amplitude = 1.2*amp;                % Estimativa da amplitude da senóide
+    fft(normrnd(0,0.01,[1,5]));
+    periodo = 1/f(find(P1 == max(P1)));     % Estimativa do período
+    for k = 1:n
+        x(k,1) = amplitude/2*cos(2*pi*k/(1/f(find(P1 == max(P1))))); % Cálculo da autocorrelação Zt
+    end
+   
+    ordem_filtro = 2000*teste(jj)/100;                           % Ordem do filtro
+    Rzx          = x(1:ordem_filtro+1,1);                % Vetor de autocorrelação Zt, Rzx = Rz
+    Rxx          = zeros(ordem_filtro+1,ordem_filtro+1); % Matriz de autocorrelação Xt,Rxx
+    k = 0;
+    for i = 1:ordem_filtro+1
+        Rxx(i:ordem_filtro+1,i) = coef(n:n+ordem_filtro-k);
+        k = k + 1;
+    end
+    Rxx = Rxx + Rxx' - Rxx(i,i)*eye(i); % Ajusta a matriz
+    h = inv(Rxx)*Rzx;                   % Cálculo dos coeficientes do filtro
+    erro(jj,1) = x(1,1) - h(1:ordem_filtro)'*x(1:ordem_filtro,1);
+end
+stem(teste,erro)
+%% Gráfico dos espectros de erro
+%% Figura 2 do artigo
+figure(11)
+s = subplot(2,1,1);
+l = 22;
+a = 35;
+plot(f1,error1,'-','Color',1*[1 0 0],'LineWidth',5)
+set(gca,'FontName','Arial')
+set(gca,'FontSize',l)
+set(gcf, 'Name', 'Dados do experimento')
+ylabel('$S_e(f)$','Interpreter','latex','FontSize',a)
+xlabel('$f$','Interpreter','latex','FontSize',a)
+axis([0 0.5 0 2])
+hold on
+plot(f1,error2,'-','Color',1*[0 1 0],'LineWidth',3)
+plot(f1,error3,'-','Color',1*[0 0 1],'LineWidth',1.8)
+hold off
+%legend({'$y_k$','$N = 360$','$N = 300$','$N = 100$',},'Interpreter','latex','Location','northeast','FontSize',22);
+
+s = subplot(2,1,2);
+l = 22;
+a = 35;
+stairs(f1,error4,'-','Color',1*[1 0 0],'LineWidth',5)
+set(gca,'FontName','Arial')
+set(gca,'FontSize',l)
+set(gcf, 'Name', 'Dados do experimento')
+ylabel('$S_e(f)$','Interpreter','latex','FontSize',a)
+xlabel('$f$','Interpreter','latex','FontSize',a)
+axis([0 0.5 0 2])
+hold on
+stairs(f1,error5,'-','Color',1*[0 1 0],'LineWidth',3)
+stairs(f1,error6,'-','Color',1*[0 0 1],'LineWidth',1.8)
+hold off
+legend({'$N = 360$','$N = 300$','$N = 100$',},'Interpreter','latex','Location','northeast','FontSize',22);
+%legend({'$y_k$','$0,2\%$','$1,0\%$','$5,0\%$',},'Interpreter','latex','Location','northeast','FontSize',22);
+
+%% Gráfico dos espectros de erro
+figure(11)
+s = subplot(2,1,1);
+l = 22;
+a = 35;
+plot(f1,error1,'-','Color',1*[1 0 0],'LineWidth',5)
+set(gca,'FontName','Arial')
+set(gca,'FontSize',l)
+set(gcf, 'Name', 'Dados do experimento')
+ylabel('$S_e(f)$','Interpreter','latex','FontSize',a)
+xlabel('$f$','Interpreter','latex','FontSize',a)
+axis([0 0.5 0 1.2])
+hold on
+plot(f1,error2,'-','Color',1*[0 0 1],'LineWidth',2)
+hold off
+
+s = subplot(2,1,2);
+l = 22;
+a = 35;
+plot(f1,error3,'-','Color',1*[1 0 0],'LineWidth',5)
+set(gca,'FontName','Arial')
+set(gca,'FontSize',l)
+set(gcf, 'Name', 'Dados do experimento')
+ylabel('$S_e(f)$','Interpreter','latex','FontSize',a)
+xlabel('$f$','Interpreter','latex','FontSize',a)
+axis([0 0.5 0 1.2])
+hold on
+plot(f1,error4,'-','Color',1*[0 0 1],'LineWidth',3)
+hold off
+legend({'$N = 350$','$N = 36$'},'Interpreter','latex','Location','northeast','FontSize',22);
+%% Simulation
+est(1:2,1) = [1 0]'; est1(1:2,1) = est(1:2,1);
+yy = C*est(1:2,1); yy1 = yy;
+for i = 2:5000
+    est(:,i) = A*est(:,i-1) + randn(1);
+    yy(i) = C*est(:,i);
+    %est1(:,i) = A1*est1(:,i-1);
+    %yy1(i) = C1*est1(:,i);
+end
+stem([0:1:length(yy)-1],yy)
+hold on
+%stem([0:1:length(yy1)-1],yy1)
+hold off
+%% Identificar os 5%
+certo = traco_P(600);
+uplim = 1.1*certo;
+lolim = 0.9*certo;
+for i = 1:length(traco_P(1:600))
+    if traco_P(i) > uplim || traco_P(i) < lolim
+        aux(i) = 0;
+    else
+        aux(i) = 1;
+    end
+end
+aux2 = find(flip(aux) == 0);
+601 - aux2(1)
+%plot([0:length(aux)-1],aux)
+clear aux aux2
+
+%% Figura mista condicao inicial e espetro do erro
+figure(13)
+s = subplot(2,2,[1,3]);
+l = 22;
+a = 35;
+plot([0:1:600-1],vetor(1:600),'k')
+set(gca,'FontName','Arial')
+set(gca,'FontSize',l)
+set(gcf, 'Name', 'Dados do experimento')
+ylabel('$y_k$','Interpreter','latex','FontSize',a)
+xlabel('$k$','Interpreter','latex','FontSize',a)
+axis([0 600 -5 5])
+hold on
+plot([0:1:600-1],saida8(1:600),'-','Color',1*[1 0 0],'LineWidth',5)
+plot([0:1:600-1],saida9(1:600),'-','Color',1*[0 1 0],'LineWidth',3)
+plot([0:1:600-1],saida7(1:600),'-','Color',1*[0 0 1],'LineWidth',2)
+hold off
+%legend({'$y_k$','$\hat{x}_1(0) = 39$','$\hat{x}_1(0) = 10$','$\hat{x}_1(0) = 0$',},'Interpreter','latex','Location','northeast','FontSize',22);
+%legend({'$y_k$','$K = [0,3 \quad -0,2]$','$K = [0,1 \quad -0,2]$','Kalman',},'Interpreter','latex','Location','northeast','FontSize',22);
+legend({'$y_k$','$\alpha = 1,1$','$\alpha = 1,0$','$\alpha = 0,95$'},'Interpreter','latex','Location','northeast','FontSize',22);
+
+s = subplot(2,2,[2,4]);
+l = 22;
+a = 35;
+
+set(gca,'FontName','Arial')
+set(gca,'FontSize',l)
+set(gcf, 'Name', 'Dados do experimento')
+ylabel('$S_e(f)$','Interpreter','latex','FontSize',a)
+xlabel('$f$','Interpreter','latex','FontSize',a)
+axis([0 0.5 0 0.2])
+hold on
+stairs(f1,error2,'-','Color',1*[0 1 0],'LineWidth',2)
+stairs(f1,error3,'-','Color',1*[0 0 1],'LineWidth',3)
+hold off
+box('on')
+%legend({'$y_k$','$K = [0,3 \quad -0,2]$','$K = [0,1 \quad -0,2]$','Kalman',},'Interpreter','latex','Location','northeast','FontSize',22);
+
+%legend({'$\hat{x}_1(0) = 10$','$\hat{x}_1(0) = 0$'},'Interpreter','latex','Location','northeast','FontSize',22);
